@@ -2,16 +2,17 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase, validateInviteCode, markInviteUsed } from '../services/supabase'
 
-const STEPS = { INVITE: 'invite', REGISTER: 'register', LOGIN: 'login' }
+const STEPS = { INVITE: 'invite', REGISTER: 'register', LOGIN: 'login', FORGOT: 'forgot' }
 
 export default function Auth() {
   const navigate  = useNavigate()
-  const [step, setStep]       = useState(STEPS.INVITE)
+  const [step, setStep]       = useState(STEPS.LOGIN)
   const [code, setCode]       = useState('')
   const [name, setName]       = useState('')
   const [email, setEmail]     = useState('')
   const [password, setPass]   = useState('')
   const [error, setError]     = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [validCode, setValidCode] = useState(null)
 
@@ -62,6 +63,19 @@ export default function Auth() {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
     if (error) { setError(error.message); setLoading(false); return }
     navigate('/')
+  }
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+    setLoading(true)
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    setLoading(false)
+    if (error) { setError(error.message); return }
+    setSuccess('Check your email — a password reset link has been sent.')
   }
 
   return (
@@ -132,8 +146,29 @@ export default function Auth() {
                 {loading ? 'Signing in…' : 'Sign In'}
               </button>
             </form>
-            <button onClick={() => setStep(STEPS.INVITE)} className="w-full text-center text-sm text-tamkeen-light mt-4">
+            <button onClick={() => { setError(''); setSuccess(''); setStep(STEPS.FORGOT) }} className="w-full text-center text-sm text-tamkeen-light mt-3">
+              Forgot password?
+            </button>
+            <button onClick={() => { setError(''); setStep(STEPS.INVITE) }} className="w-full text-center text-sm text-tamkeen-light mt-2">
               Need to register? Enter invite code
+            </button>
+          </>
+        )}
+
+        {step === STEPS.FORGOT && (
+          <>
+            <h2 className="text-lg font-bold text-tamkeen-ink mb-1">Reset Password</h2>
+            <p className="text-sm text-gray-500 mb-4">Enter your email and we'll send a reset link.</p>
+            <form onSubmit={handleForgotPassword} className="space-y-3">
+              <input className="input" placeholder="Email address" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {success && <p className="text-green-600 text-sm">{success}</p>}
+              <button className="btn-primary w-full" type="submit" disabled={loading}>
+                {loading ? 'Sending…' : 'Send Reset Link'}
+              </button>
+            </form>
+            <button onClick={() => { setError(''); setSuccess(''); setStep(STEPS.LOGIN) }} className="w-full text-center text-sm text-tamkeen-light mt-4">
+              ← Back to Sign In
             </button>
           </>
         )}

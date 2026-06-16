@@ -24,6 +24,7 @@ import YearlyAnalytics from './pages/YearlyAnalytics'
 import SleepTracker from './pages/SleepTracker'
 import Ruqyah from './pages/Ruqyah'
 import Qunoot from './pages/Qunoot'
+import ResetPassword from './pages/ResetPassword'
 
 function PrivateRoute({ children }) {
   const { user } = useAuth()
@@ -36,6 +37,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/auth" element={<Auth />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       <Route path="/" element={
         <PrivateRoute>
