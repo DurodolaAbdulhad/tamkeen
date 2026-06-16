@@ -48,7 +48,7 @@ export default function Wajibaat() {
         <ProgressRing pct={pct} size={64} stroke={6} label={`${completed}/${total}`} />
         <div>
           <p className="font-bold text-lg">Daily Wajibaat</p>
-          <p className="text-green-300 text-sm">{Math.round(pct*100)}% complete today</p>
+          <p className="text-green-300 text-sm">{Math.floor(pct*100)}% complete today</p>
           {currentStreak > 0 && <p className="text-green-200 text-xs mt-0.5">🔥 {currentStreak} day streak</p>}
         </div>
       </div>

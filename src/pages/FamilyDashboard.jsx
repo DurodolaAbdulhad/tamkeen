@@ -194,17 +194,6 @@ export default function FamilyDashboard() {
         <p className="text-xs text-gray-400 mt-1">Use this to encourage each other — not to compete</p>
       </div>
 
-      {/* Note about schema */}
-      <div className="card bg-amber-50 border border-amber-100">
-        <p className="text-xs text-amber-800 font-semibold mb-1">One-time database update needed</p>
-        <p className="text-xs text-amber-700">
-          Run this in Supabase SQL Editor to enable streak sharing:
-        </p>
-        <pre className="text-[10px] bg-amber-100 rounded p-2 mt-2 overflow-x-auto text-amber-900">{`ALTER TABLE public.users
-ADD COLUMN IF NOT EXISTS share_streak boolean DEFAULT false,
-ADD COLUMN IF NOT EXISTS current_streak integer DEFAULT 0,
-ADD COLUMN IF NOT EXISTS longest_streak integer DEFAULT 0;`}</pre>
-      </div>
     </div>
   )
 }

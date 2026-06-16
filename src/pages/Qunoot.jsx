@@ -3,6 +3,38 @@ import { Play, Pause, Volume2 } from 'lucide-react'
 
 const QUNOOT_ITEMS = [
   {
+    id: 'prophetic',
+    name: "Prophetic Qunoot (Complete)",
+    subtitle: 'دعاء القنوت النبوي الكامل',
+    badge: 'From the Prophet ﷺ',
+    arabic: 'اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ، وَعَافِنِي فِيمَنْ عَافَيْتَ، وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ، وَبَارِكْ لِي فِيمَا أَعْطَيْتَ، وَقِنِي شَرَّ مَا قَضَيْتَ، فَإِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ، وَإِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ، وَلَا يَعِزُّ مَنْ عَادَيْتَ، تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ، وَصَلَّى اللَّهُ عَلَى النَّبِيِّ مُحَمَّدٍ',
+    transliteration: [
+      "Allahumma ihdini fiman hadayt",
+      "wa 'afini fiman 'afayt",
+      "wa tawallani fiman tawallayt",
+      "wa barik li fima a'tayt",
+      "wa qini sharra ma qadayt",
+      "fa innaka taqdi wa la yuqda 'alayk",
+      "wa innahu la yadhillu man walayt",
+      "wa la ya'izzu man 'adayt",
+      "tabarakta rabbana wa ta'alayt",
+      "wa sallallahu 'ala al-nabiyyi Muhammad",
+    ],
+    translation: [
+      "O Allah, guide me among those You have guided,",
+      "grant me wellbeing among those You have granted wellbeing,",
+      "befriend me among those You have befriended,",
+      "bless me in what You have given me,",
+      "protect me from the evil of what You have decreed —",
+      "for You decree and none decrees against You.",
+      "Verily, whoever You befriend is not humiliated,",
+      "and whoever You oppose is not honoured.",
+      "Blessed are You, our Lord, Most High.",
+      "And may Allah's peace and blessings be upon the Prophet Muhammad.",
+    ],
+    source: 'Complete version with salawat — Tirmidhi 464, Abu Dawud 1425. Taught by the Prophet ﷺ to his grandson Hasan ibn Ali. This is the most authentic and complete form, recited after ruku in the last rak\'ah of Witr.',
+  },
+  {
     id: 'witr',
     name: "Du'a Qunoot al-Witr",
     subtitle: 'دعاء قنوت الوتر',
@@ -90,6 +122,60 @@ const QUNOOT_ITEMS = [
     ],
     source: 'Narrated by Umar ibn al-Khattab (رضي الله عنه) — classified by scholars as Qunoot for Fajr. Widely recited in the Shafi\'i tradition as congregational Fajr Qunoot.',
   },
+  {
+    id: 'personal',
+    name: "Personal Qunoot — Du'a for Yourself",
+    subtitle: 'دعاء قنوت شخصي',
+    badge: 'Personal supplication',
+    arabic: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى، اللَّهُمَّ إِنِّي أَسْأَلُكَ الثَّبَاتَ فِي الأَمْرِ وَالْعَزِيمَةَ عَلَى الرُّشْدِ، وَأَسْأَلُكَ شُكْرَ نِعْمَتِكَ وَحُسْنَ عِبَادَتِكَ، وَأَسْأَلُكَ قَلْبًا سَلِيمًا وَلِسَانًا صَادِقًا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا تَعْلَمُ، وَأَسْأَلُكَ مِنْ خَيْرِ مَا تَعْلَمُ، وَأَسْتَغْفِرُكَ مِمَّا تَعْلَمُ، إِنَّكَ أَنْتَ عَلَّامُ الْغُيُوبِ',
+    transliteration: [
+      "Allahumma inni as'aluka al-huda wa al-tuqa wa al-'afafa wa al-ghina",
+      "Allahumma inni as'aluka al-thabata fi al-amri wa al-'azimata 'ala al-rushd",
+      "wa as'aluka shukra ni'matika wa husna 'ibadatik",
+      "wa as'aluka qalban saliman wa lisanan sadiqan",
+      "wa a'udhu bika min sharri ma ta'lam",
+      "wa as'aluka min khayri ma ta'lam",
+      "wa astaghfiruka mimma ta'lam",
+      "innaka anta 'allamu al-ghuyub",
+    ],
+    translation: [
+      "O Allah, I ask You for guidance, piety, chastity, and contentment.",
+      "O Allah, I ask You for steadfastness in my affairs and determination upon righteousness.",
+      "I ask You to be grateful for Your blessings and to worship You well.",
+      "I ask You for a sound heart and a truthful tongue.",
+      "I seek refuge in You from the evil of what You know,",
+      "and I ask You for the good of what You know,",
+      "and I seek Your forgiveness for what You know.",
+      "Truly, You are the Knower of all that is hidden.",
+    ],
+    source: 'Compiled from authentic prophetic supplications — Ibn Mas\'ud (رضي الله عنه) reported the Prophet ﷺ saying: "Ask Allah for health, wellbeing, and certainty in this world and the hereafter." (Ahmad, Tirmidhi 3558)',
+  },
+  {
+    id: 'ummah',
+    name: "Qunoot for the Muslim Ummah",
+    subtitle: 'قنوت للأمة الإسلامية',
+    badge: 'Du\'a al-Nazilah',
+    arabic: 'اللَّهُمَّ انْصُرِ الْمُسْتَضْعَفِينَ مِنَ الْمُؤْمِنِينَ، اللَّهُمَّ اشْدُدْ وَطْأَتَكَ عَلَى الظَّالِمِينَ، اللَّهُمَّ فَرِّجْ عَنِ الْمَكْرُوبِينَ وَاكْشِفِ الْبَلَاءَ عَنِ الْمُبْتَلَيْنَ، اللَّهُمَّ آمِنِ الْخَائِفِينَ وَاشْفِ الْمَرْضَى وَارْحَمِ الْمَوْتَى، اللَّهُمَّ أَعِزَّ الْإِسْلَامَ وَالْمُسْلِمِينَ وَأَذِلَّ الشِّرْكَ وَالْمُشْرِكِينَ، وَاحْفَظِ الدِّينَ وَأَهْلَهُ وَانْصُرِ الْإِسْلَامَ وَأَهْلَهُ',
+    transliteration: [
+      "Allahumma unsuri al-mustad'afina min al-mu'minin",
+      "Allahumma ushdud wat'ataka 'ala al-zalimin",
+      "Allahumma farrij 'an al-makrubin wa ushfi al-bala'a 'an al-mubtalayin",
+      "Allahumma amin al-kha'ifin wa ashfi al-marda wa arham al-mawta",
+      "Allahumma a'izza al-islama wa al-muslimin",
+      "wa adhilla al-shirka wa al-mushrikin",
+      "wa ihfadh al-dina wa ahlahu wa unsuri al-islama wa ahlahu",
+    ],
+    translation: [
+      "O Allah, give victory to the oppressed believers.",
+      "O Allah, tighten Your grip upon the oppressors.",
+      "O Allah, relieve the distressed and lift affliction from the afflicted.",
+      "O Allah, grant safety to the fearful, heal the sick, and have mercy on the dead.",
+      "O Allah, honour Islam and the Muslims,",
+      "and humiliate shirk and those who commit it,",
+      "preserve the religion and its people, and give victory to Islam and its people.",
+    ],
+    source: 'Du\'a al-Nazilah — recited during times of collective hardship. The Prophet ﷺ performed Qunoot al-Nazilah for an entire month in Fajr prayer (Sahih Bukhari 1002). It is sunnah to add specific du\'a for the Ummah.',
+  },
 ]
 
 function speak(text, onDone) {
@@ -110,7 +196,6 @@ function QunootCard({ item }) {
   const stateRef = useRef({ playing: false, idx: -1 })
 
   const playLine = useCallback((idx) => {
-    const lines = item.arabic.split('، ').concat(item.arabic.split('، ').length === 1 ? [] : [])
     const allLines = item.transliteration
     if (idx >= allLines.length) {
       stateRef.current.playing = false; stateRef.current.idx = -1
@@ -120,8 +205,10 @@ function QunootCard({ item }) {
     stateRef.current.idx = idx; stateRef.current.playing = true
     setLineIdx(idx); setPlaying(true)
 
-    const arabicPart = item.arabic.split('،')[idx] || item.arabic
-    speak(arabicPart.trim(), () => {
+    // Split Arabic by comma or use full text for single-line items
+    const arabicParts = item.arabic.split(/[،,]/)
+    const arabicPart = arabicParts[idx]?.trim() || item.arabic
+    speak(arabicPart, () => {
       if (stateRef.current.playing) playLine(stateRef.current.idx + 1)
     })
   }, [item])

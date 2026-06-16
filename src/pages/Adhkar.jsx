@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Play, Pause, SkipForward, SkipBack, Radio, RefreshCw } from 'lucide-react'
+import { Play, Pause, SkipForward, SkipBack, Radio, Repeat, Repeat1 } from 'lucide-react'
 
 // ─── RECITERS ────────────────────────────────────────────────────────────────
 const RECITERS = [
@@ -309,19 +309,28 @@ const EVENING_ADHKAR = [
 function useAdhkarAudio(listRef, reciterRef) {
   const [playing,    setPlaying]    = useState(false)
   const [currentIdx, setCurrentIdx] = useState(0)
-  const audioRef = useRef(null)
-  const stateRef = useRef({ playing: false, idx: 0 })
+  const [repeatMode, setRepeatMode] = useState('none') // 'none' | 'all' | 'one'
+  const audioRef  = useRef(null)
+  const stateRef  = useRef({ playing: false, idx: 0 })
+  const repeatRef = useRef('none')
 
   const getAudio = () => {
     if (!audioRef.current) audioRef.current = new Audio()
     return audioRef.current
   }
 
+  const cycleRepeat = useCallback(() => {
+    const next = repeatRef.current === 'none' ? 'all' : repeatRef.current === 'all' ? 'one' : 'none'
+    repeatRef.current = next
+    setRepeatMode(next)
+  }, [])
+
   const playFrom = useCallback((idx) => {
     const list     = listRef.current
     const reciter  = reciterRef.current
 
     if (idx < 0 || idx >= list.length) {
+      if (repeatRef.current === 'all') { playFrom(0); return }
       stateRef.current.playing = false
       stateRef.current.idx = 0
       setPlaying(false)
@@ -337,7 +346,11 @@ function useAdhkarAudio(listRef, reciterRef) {
     setPlaying(true)
 
     const item   = list[idx]
-    const advance = () => { if (stateRef.current.playing) playFrom(stateRef.current.idx + 1) }
+    const advance = () => {
+      if (!stateRef.current.playing) return
+      if (repeatRef.current === 'one') playFrom(stateRef.current.idx)
+      else playFrom(stateRef.current.idx + 1)
+    }
 
     // Resolve URL
     let url = null
@@ -416,7 +429,7 @@ function useAdhkarAudio(listRef, reciterRef) {
 
   useEffect(() => () => { getAudio().pause(); window.speechSynthesis?.cancel() }, [])
 
-  return { playing, currentIdx, play: playFrom, stop, prev, next, jumpTo }
+  return { playing, currentIdx, repeatMode, cycleRepeat, play: playFrom, stop, prev, next, jumpTo }
 }
 
 // ─── ADHKAR CARD ─────────────────────────────────────────────────────────────
@@ -480,7 +493,7 @@ export default function Adhkar() {
   useEffect(() => { listRef.current = list }, [list])
   useEffect(() => { reciterRef.current = reciter }, [reciter])
 
-  const { playing, currentIdx, play, stop, prev, next, jumpTo } = useAdhkarAudio(listRef, reciterRef)
+  const { playing, currentIdx, repeatMode, cycleRepeat, play, stop, prev, next, jumpTo } = useAdhkarAudio(listRef, reciterRef)
 
   const quranCount = list.filter(i => i.audioType !== 'tts').length
 
@@ -515,7 +528,7 @@ export default function Adhkar() {
         <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
           {RECITERS.map((r, i) => (
             <button key={r.id}
-              onClick={() => { setReciterIdx(i); if (playing) { stop() } }}
+              onClick={() => { setReciterIdx(i); reciterRef.current = RECITERS[i]; if (playing) stop() }}
               className={`flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${reciterIdx === i ? 'bg-tamkeen-dark text-white border-tamkeen-dark' : 'border-gray-200 text-gray-500'}`}>
               {r.flag} {r.name}
             </button>
@@ -552,6 +565,11 @@ export default function Adhkar() {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <button onClick={cycleRepeat}
+                className={`w-8 h-8 rounded-full flex items-center justify-center active:scale-90 ${repeatMode !== 'none' ? 'bg-tamkeen-mint text-tamkeen-dark' : 'bg-white/10'}`}
+                title={repeatMode === 'none' ? 'Repeat off' : repeatMode === 'all' ? 'Repeat all' : 'Repeat one'}>
+                {repeatMode === 'one' ? <Repeat1 size={13} /> : <Repeat size={13} />}
+              </button>
               <button onClick={prev}  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center active:scale-90"><SkipBack size={14} /></button>
               <button onClick={playing ? stop : () => play(currentIdx)}
                 className="w-10 h-10 rounded-full bg-tamkeen-mint text-tamkeen-dark flex items-center justify-center font-bold active:scale-90">

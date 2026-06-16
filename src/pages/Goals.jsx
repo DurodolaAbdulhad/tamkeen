@@ -27,9 +27,17 @@ export default function Goals() {
   const [filter, setFilter]       = useState('all')
   const [saving, setSaving]       = useState(false)
 
+  const PRIORITIES = [
+    { id: 'high',   label: '🔴 High',   color: 'bg-red-50 border-red-300 text-red-700' },
+    { id: 'medium', label: '🟡 Medium', color: 'bg-yellow-50 border-yellow-300 text-yellow-700' },
+    { id: 'low',    label: '🟢 Low',    color: 'bg-green-50 border-green-300 text-green-700' },
+  ]
+
   const [form, setForm] = useState({
     category: 'hereafter', goal_title: '', objective: '',
     timeline_start: '', timeline_end: '', status: 'not_started',
+    priority: 'medium', success_metric: '', motivation: '',
+    obstacle: '', weekly_hours: '', accountability: '',
   })
 
   useEffect(() => {
@@ -45,18 +53,35 @@ export default function Goals() {
     if (!user) return
     setSaving(true)
 
+    // Encode SMART extras into objective (no schema change needed)
+    let enriched = form.objective
+    const extras = [
+      form.success_metric && `📊 Measure: ${form.success_metric}`,
+      form.motivation     && `💡 Why: ${form.motivation}`,
+      form.obstacle       && `⚠️ Obstacle: ${form.obstacle}`,
+      form.weekly_hours   && `⏱️ Commitment: ${form.weekly_hours}h/week`,
+      form.accountability && `👥 Accountability: ${form.accountability}`,
+    ].filter(Boolean)
+    if (extras.length) enriched += '\n\n' + extras.join('\n')
+
     let milestones = null
     try {
       milestones = await generateGoalMilestones({ ...form, user_id: user.id })
-    } catch { /* AI unavailable — continue without milestones */ }
+    } catch { /* AI unavailable */ }
 
     const { data } = await createGoal({
-      ...form, user_id: user.id,
+      user_id: user.id,
+      category: form.category,
+      goal_title: form.goal_title,
+      objective: enriched,
+      timeline_start: form.timeline_start,
+      timeline_end: form.timeline_end,
+      status: 'not_started',
       ai_milestones: milestones,
     })
 
-    if (data) addGoal(data)
-    setForm({ category: 'hereafter', goal_title: '', objective: '', timeline_start: '', timeline_end: '', status: 'not_started' })
+    if (data) addGoal({ ...data, _priority: form.priority })
+    setForm({ category: 'hereafter', goal_title: '', objective: '', timeline_start: '', timeline_end: '', status: 'not_started', priority: 'medium', success_metric: '', motivation: '', obstacle: '', weekly_hours: '', accountability: '' })
     setShowForm(false)
     setSaving(false)
   }
@@ -116,11 +141,13 @@ export default function Goals() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-semibold text-tamkeen-ink text-sm leading-snug">{goal.goal_title}</p>
-                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full flex-shrink-0 ${STATUS_STYLES[goal.status]}`}>
-                        {goal.status?.replace('_', ' ')}
-                      </span>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${STATUS_STYLES[goal.status]}`}>
+                          {goal.status?.replace('_', ' ')}
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{goal.objective}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{goal.objective?.split('\n\n')[0]}</p>
                     {krs.length > 0 && (
                       <div className="mt-2">
                         <div className="w-full bg-gray-100 rounded-full h-1.5">
@@ -168,28 +195,86 @@ export default function Goals() {
                 </div>
               </div>
 
+              {/* S — Specific */}
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1.5 block">Goal Title</label>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">
+                  <span className="bg-tamkeen-dark text-white text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">S</span>
+                  Goal Title — be specific
+                </label>
                 <input className="input" placeholder="e.g. Memorize Surah Al-Baqarah" value={form.goal_title}
                   onChange={(e) => setForm(f => ({ ...f, goal_title: e.target.value }))} required />
               </div>
 
+              {/* M — Measurable */}
               <div>
-                <label className="text-xs font-medium text-gray-500 mb-1.5 block">Objective (What does success look like?)</label>
-                <textarea className="input resize-none" rows={3} placeholder="e.g. Complete memorization of all 286 ayahs with correct tajweed"
-                  value={form.objective} onChange={(e) => setForm(f => ({ ...f, objective: e.target.value }))} required />
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">
+                  <span className="bg-tamkeen-dark text-white text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">M</span>
+                  Success Metric — how will you measure it?
+                </label>
+                <input className="input" placeholder="e.g. Can recite all 286 ayahs from memory" value={form.success_metric}
+                  onChange={(e) => setForm(f => ({ ...f, success_metric: e.target.value }))} required />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Start Date</label>
-                  <input type="date" className="input text-sm" value={form.timeline_start}
+              {/* A — Achievable */}
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">
+                  <span className="bg-tamkeen-dark text-white text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">A</span>
+                  Priority &amp; commitment
+                </label>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {PRIORITIES.map(p => (
+                    <button type="button" key={p.id}
+                      onClick={() => setForm(f => ({ ...f, priority: p.id }))}
+                      className={`py-1.5 rounded-xl border text-xs font-medium transition-all ${form.priority === p.id ? p.color : 'border-gray-200 text-gray-400'}`}>
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+                <input className="input" placeholder="Weekly commitment — e.g. 5 hours/week" value={form.weekly_hours}
+                  onChange={(e) => setForm(f => ({ ...f, weekly_hours: e.target.value }))} />
+              </div>
+
+              {/* R — Relevant */}
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">
+                  <span className="bg-tamkeen-dark text-white text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">R</span>
+                  Why does this matter to you?
+                </label>
+                <textarea className="input resize-none" rows={2} placeholder="e.g. Strengthen my connection with the Quran before Ramadan"
+                  value={form.motivation} onChange={(e) => setForm(f => ({ ...f, motivation: e.target.value }))} required />
+              </div>
+
+              {/* T — Time-bound */}
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1.5 block">
+                  <span className="bg-tamkeen-dark text-white text-[9px] font-bold px-1.5 py-0.5 rounded mr-1">T</span>
+                  Timeline
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <input type="date" className="input text-sm" placeholder="Start" value={form.timeline_start}
                     onChange={(e) => setForm(f => ({ ...f, timeline_start: e.target.value }))} />
+                  <input type="date" className="input text-sm" placeholder="Target date" value={form.timeline_end}
+                    onChange={(e) => setForm(f => ({ ...f, timeline_end: e.target.value }))} required />
+                </div>
+              </div>
+
+              {/* OKR extras */}
+              <div className="border-t pt-3 space-y-3">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">OKR Details</p>
+                <div>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Objective — what does full success look like?</label>
+                  <textarea className="input resize-none" rows={2} placeholder="e.g. Complete memorization of all 286 ayahs with correct tajweed"
+                    value={form.objective} onChange={(e) => setForm(f => ({ ...f, objective: e.target.value }))} required />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Target Date</label>
-                  <input type="date" className="input text-sm" value={form.timeline_end}
-                    onChange={(e) => setForm(f => ({ ...f, timeline_end: e.target.value }))} required />
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Biggest obstacle</label>
+                  <input className="input" placeholder="e.g. Finding consistent time in evenings"
+                    value={form.obstacle} onChange={(e) => setForm(f => ({ ...f, obstacle: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-500 mb-1.5 block">Accountability partner</label>
+                  <input className="input" placeholder="e.g. Abu Ibrahim — check in every Friday"
+                    value={form.accountability} onChange={(e) => setForm(f => ({ ...f, accountability: e.target.value }))} />
                 </div>
               </div>
 
