@@ -10,6 +10,10 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
+// Safari iOS mobile browser has no Notification API — guard everywhere
+const notifSupported = () => typeof window !== 'undefined' && 'Notification' in window
+const notifPermission = () => notifSupported() ? Notification.permission : 'denied'
+
 let app, messaging
 
 try {
@@ -22,6 +26,7 @@ try {
 export const requestNotificationPermission = async () => {
   if (!messaging) return null
   try {
+    if (!notifSupported()) return null
     const permission = await Notification.requestPermission()
     if (permission !== 'granted') return null
     const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY })
@@ -39,7 +44,7 @@ export const onForegroundMessage = (callback) => {
 
 // ─── LOCAL NOTIFICATION (shown via Service Worker — appears on lock screen) ──
 const swNotify = async (title, body, icon = '/icons/icon-192.png', tag) => {
-  if (!('serviceWorker' in navigator) || Notification.permission !== 'granted') return
+  if (!('serviceWorker' in navigator) || notifPermission() !== 'granted') return
   try {
     const reg = await navigator.serviceWorker.ready
     reg.showNotification(title, {
@@ -53,7 +58,7 @@ const swNotify = async (title, body, icon = '/icons/icon-192.png', tag) => {
     })
   } catch (err) {
     // Fallback to basic Notification API
-    new Notification(title, { body, icon })
+    if (notifSupported()) new Notification(title, { body, icon })
   }
 }
 
@@ -69,7 +74,7 @@ const PRAYER_LABELS = {
 const timeouts = {}
 
 export const schedulePrayerNotifications = (prayerTimes, todayAyah, todayHadith) => {
-  if (Notification.permission !== 'granted') return
+  if (notifPermission() !== 'granted') return
 
   // Clear any previously scheduled prayer notifications
   Object.values(timeouts).forEach(clearTimeout)
@@ -150,6 +155,6 @@ export const schedulePrayerNotifications = (prayerTimes, todayAyah, todayHadith)
 
 // ─── FALLBACK when app is open in foreground ──────────────────────────────────
 export const scheduleLocalNotification = (title, body, delayMs = 0) => {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return
+  if (notifPermission() !== 'granted') return
   setTimeout(() => swNotify(title, body), delayMs)
 }

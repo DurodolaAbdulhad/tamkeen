@@ -36,7 +36,7 @@ export default function Dashboard() {
 
   // Schedule prayer notifications when prayer times + daily content are available
   useEffect(() => {
-    if (!prayerTimes || Notification.permission !== 'granted') return
+    if (!prayerTimes || !('Notification' in window) || Notification.permission !== 'granted') return
     schedulePrayerNotifications(prayerTimes, dailyAyah, dailyHadith)
   }, [prayerTimes, dailyAyah, dailyHadith])
 

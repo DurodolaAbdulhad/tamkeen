@@ -48,7 +48,7 @@ export default function AppShell() {
     if (token && user) {
       await updateFcmToken(user.id, token)
       setNotifications(true, token)
-    } else if (Notification.permission === 'granted') {
+    } else if ('Notification' in window && Notification.permission === 'granted') {
       setNotifications(true, null)
     }
     setEnabling(false)
