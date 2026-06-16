@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
+import ErrorBoundary from './components/ErrorBoundary'
 import AppShell from './components/layout/AppShell'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
@@ -28,13 +29,18 @@ import ResetPassword from './pages/ResetPassword'
 
 function PrivateRoute({ children }) {
   const { user } = useAuth()
-  if (user === undefined) return null // loading
+  if (user === undefined) return (
+    <div className="flex items-center justify-center min-h-screen bg-tamkeen-cream">
+      <div className="w-8 h-8 border-4 border-tamkeen-dark border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
   if (!user) return <Navigate to="/auth" replace />
   return children
 }
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <Routes>
       <Route path="/auth" element={<Auth />} />
       <Route path="/reset-password" element={<ResetPassword />} />
@@ -70,5 +76,6 @@ export default function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </ErrorBoundary>
   )
 }
