@@ -74,7 +74,7 @@ export default function Auth() {
       redirectTo: `${window.location.origin}/reset-password`,
     })
     setLoading(false)
-    if (error) { setError(error.message); return }
+    if (error) { setError(error.message || 'Failed to send email. Please try again.'); return }
     setSuccess('Check your email — a password reset link has been sent.')
   }
 
