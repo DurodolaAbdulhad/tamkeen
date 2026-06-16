@@ -23,12 +23,11 @@ export default class ErrorBoundary extends Component {
             <p style={{ margin: '0 0 8px', fontSize: 14, color: '#664d03' }}>
               The app encountered an error. Try refreshing the page.
             </p>
-            <details style={{ marginTop: 12, fontSize: 12, color: '#6c757d' }}>
-              <summary>Error details</summary>
-              <pre style={{ marginTop: 8, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                {this.state.error?.message}
-              </pre>
-            </details>
+            <pre style={{ marginTop: 12, fontSize: 11, color: '#664d03', background: '#fff8e1', padding: 10, borderRadius: 6, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+              {this.state.error?.message}
+              {'\n\n'}
+              {this.state.error?.stack?.slice(0, 400)}
+            </pre>
             <button
               onClick={() => window.location.reload()}
               style={{ marginTop: 16, background: '#1B4332', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 20px', fontSize: 14, cursor: 'pointer' }}
