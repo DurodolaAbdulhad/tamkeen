@@ -56,9 +56,9 @@ export default function AppShell() {
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-tamkeen-cream">
+    <div className="h-full flex flex-col bg-tamkeen-cream">
       <Header />
-      <main className="flex-1 overflow-y-auto pb-24">
+      <main className="flex-1 overflow-y-auto pb-28" style={{ WebkitOverflowScrolling: 'touch' }}>
         <div className="max-w-lg mx-auto px-4 py-4 page-enter">
           <Outlet />
         </div>

@@ -8,19 +8,21 @@
   html {
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    height: 100%;
   }
 
   body {
     background-color: #FAFAF5;
     color: #1A1A2E;
-    min-height: 100dvh;
+    height: 100%;
+    overflow: hidden;     /* window never scrolls — only inner <main> scrolls */
     overscroll-behavior: none;
   }
 
-  /* Safe area for iOS notch */
+  /* Safe area for iOS notch — top only; bottom is handled by BottomNav */
   #root {
+    height: 100%;
     padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
